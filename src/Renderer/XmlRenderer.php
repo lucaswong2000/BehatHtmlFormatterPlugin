@@ -32,7 +32,7 @@ class XmlRenderer
      * Renders after an exercice.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : HTML generated
+     * @return string  : XML generated
      */        
     public function renderAfterExercise($obj) {
         //--> features results
@@ -114,7 +114,7 @@ class XmlRenderer
      * Renders before a suite.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : HTML generated
+     * @return string  : XML generated
      */        
     public function renderBeforeSuite($obj) {
         $print = '
@@ -128,7 +128,7 @@ class XmlRenderer
      * Renders after a suite.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : HTML generated
+     * @return string  : XML generated
      */     
     public function renderAfterSuite($obj) {
         return '</Suite>' ;
@@ -138,7 +138,7 @@ class XmlRenderer
      * Renders before a feature.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : HTML generated
+     * @return string  : XML generated
      */        
     public function renderBeforeFeature($obj) {
     
@@ -171,7 +171,7 @@ class XmlRenderer
      * Renders after a feature.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : HTML generated
+     * @return string  : XML generated
      */     
     public function renderAfterFeature($obj) {
 		$print = '';
@@ -188,7 +188,7 @@ class XmlRenderer
      * Renders before a scenario.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : HTML generated
+     * @return string  : XML generated
      */            
     public function renderBeforeScenario($obj) {
         //scenario head
@@ -220,7 +220,7 @@ class XmlRenderer
      * Renders after a scenario.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : HTML generated
+     * @return string  : XML generated
      */     
     public function renderAfterScenario($obj) {
         $print = '</Scenario>';
@@ -232,7 +232,7 @@ class XmlRenderer
      * Renders before an outline.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : HTML generated
+     * @return string  : XML generated
      */            
     public function renderBeforeOutline($obj) {
         return '' ;
@@ -242,7 +242,7 @@ class XmlRenderer
      * Renders after an outline.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : HTML generated
+     * @return string  : XML generated
      */     
     public function renderAfterOutline($obj) {
         return '' ;
@@ -252,7 +252,7 @@ class XmlRenderer
      * Renders before a step.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : HTML generated
+     * @return string  : XML generated
      */        
     public function renderBeforeStep($obj) {
 
@@ -263,7 +263,7 @@ class XmlRenderer
      * Renders after a step.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : HTML generated
+     * @return string  : XML generated
      */        
     public function renderAfterStep($obj) {
 
