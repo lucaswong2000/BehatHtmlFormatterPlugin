@@ -41,7 +41,7 @@ class FileOutputPrinter implements PrinterInterface {
         $this->rendererFiles[$renderer] = $renderer . '_' . $date;
       }
       else{
-        $this->rendererFiles[$renderer] = $filename;
+        $this->rendererFiles[$renderer] = $renderer. '_'. $filename;
       }
     }
 
