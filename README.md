@@ -1,3 +1,13 @@
+## Note:
+Please note this is a fork from the BehatHtmlFormatterPlugin with some modifications, if you are looking for the original one, please go to : https://github.com/dutchiexl/BehatHtmlFormatterPlugin
+
+### changes I made:
+* Add a Render to generate xml file for easier poste processing;
+* Now every render genereated file is with different names..
+
+
+
+
 ## BehatHtmlFormatterPlugin
 
 Behat 3 extension for generating HTML reports from your test results.
