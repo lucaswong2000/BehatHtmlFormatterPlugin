@@ -14,7 +14,6 @@ class XmlRenderer
     
     }
     
-
     /**
      * Renders before an exercice.
      *
@@ -23,7 +22,7 @@ class XmlRenderer
      */    
     public function renderBeforeExercise($obj) {
     
-        $print = '<?xml version="1.0" encoding="UTF-8"?>' ;
+        $print = '<?xml version="1.0" encoding="UTF-8"?><TestIHM>' ;
         
         return $print ;
     }
@@ -32,7 +31,7 @@ class XmlRenderer
      * Renders after an exercice.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : XML generated
+     * @return string  : HTML generated
      */        
     public function renderAfterExercise($obj) {
         //--> features results
@@ -41,7 +40,7 @@ class XmlRenderer
             $strFeatPassed = '<Passed>'.count($obj->getPassedFeatures()).' </Passed>';
         }      
         
-        $strFeatFailed = '' ;    
+        $strFeatFailed = '<Failed>0</Failed>' ;    
         $sumRes = 'passed' ;        
         if (count($obj->getFailedFeatures()) > 0) {
             $strFeatFailed = '<Failed>'.count($obj->getFailedFeatures()).' </Failed>';
@@ -49,33 +48,33 @@ class XmlRenderer
         } 
         
         //--> scenarios results
-        $strScePassed = '' ;
+        $strScePassed = '<Passed>0</Passed>' ;
         if (count($obj->getPassedScenarios()) > 0) {
             $strScePassed = '<Passed>'.count($obj->getPassedScenarios()).'</Passed>';
         }             
         
-        $strSceFailed = '' ;
+        $strSceFailed = '<Failed>0</Failed>' ;
         if (count($obj->getFailedScenarios()) > 0) {
-            $strSceFailed = '<Failed'.count($obj->getFailedScenarios()).' </Failed>';
+            $strSceFailed = '<Failed>'.count($obj->getFailedScenarios()).' </Failed>';
         } 
         
         //--> steps results
-        $strStepsPassed = '' ;
+        $strStepsPassed = '<Passed>0</Passed>' ;
         if (count($obj->getPassedSteps()) > 0) {
             $strStepsPassed = '<Passed>'.count($obj->getPassedSteps()).'</Passed>';
         }             
         
-        $strStepsPending = '' ;
+        $strStepsPending = '<Pending>0</Pending>' ;
         if (count($obj->getPendingSteps()) > 0) {
             $strStepsPending = '<Pending>'.count($obj->getPendingSteps()).'</Pending>';
         } 
 
-        $strStepsSkipped = '' ;
+        $strStepsSkipped = '<Skipped>0</Skipped>' ;
         if (count($obj->getSkippedSteps()) > 0) {
             $strStepsSkipped = '<Skipped>'.count($obj->getSkippedSteps()).'</Skipped>';
         } 
         
-        $strStepsFailed = '' ;
+        $strStepsFailed = '<Failed>0</Failed>' ;
         if (count($obj->getFailedSteps()) > 0) {
             $strStepsFailed = '<Failed>'.count($obj->getFailedSteps()).'</Failed>';
         } 
@@ -101,10 +100,10 @@ class XmlRenderer
         <Summary result="'.$sumRes.'">
 			<Features>'.$strFeatPassed.$strFeatFailed.'</Features>
 			<Scenarios>'.$strScePassed.$strSceFailed.'</Scenarios>
-			<Steps>'.$strStepsPassed.$strStepsFailed.'</Steps>
+			<Steps>'.$strStepsPassed.$strStepsFailed. $strStepsSkipped.'</Steps>
 			<time>'.$obj->getTimer().'</time>
 			<memory>'.$obj->getMemory().'</memory>
-		</Summary>';    
+		</Summary></TestIHM>';    
 
         return $print ;
     }
@@ -114,11 +113,11 @@ class XmlRenderer
      * Renders before a suite.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : XML generated
+     * @return string  : HTML generated
      */        
     public function renderBeforeSuite($obj) {
         $print = '
-        <Suite name="' . $obj->getCurrentSuite()->getName() . '">';
+        <Suite name="' . htmlspecialchars( $obj->getCurrentSuite()->getName(), ENT_XML1) . '">';
         
         return $print ;
     
@@ -128,7 +127,7 @@ class XmlRenderer
      * Renders after a suite.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : XML generated
+     * @return string  : HTML generated
      */     
     public function renderAfterSuite($obj) {
         return '</Suite>' ;
@@ -138,32 +137,13 @@ class XmlRenderer
      * Renders before a feature.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : XML generated
+     * @return string  : HTML generated
      */        
     public function renderBeforeFeature($obj) {
     
         //feature head
 		$print = '
-		<Feature id="'.$obj->getCurrentFeature()->getId().'" result="'. $obj->getCurrentFeature()->getPassedClass()  . '" title="'. $obj->getCurrentFeature()->getName() . '">';
-
-
-//        $print = '
-//        <div class="feature">
-//            <h2>
-//                <span id="feat'.$obj->getCurrentFeature()->getId().'" class="keyword"> Feature: </span>
-//                <span class="title">' . $obj->getCurrentFeature()->getName() . '</span>
-//            </h2>
-//            <p>' . $obj->getCurrentFeature()->getDescription() . '</p>
-//            <ul class="tags">' ;
-//        foreach($obj->getCurrentFeature()->getTags() as $tag) {
-//            $print .= '
-//                <li>@' . $tag .'</li>' ;
-//        }      
-//        $print .= '
-//            </ul>' ;
-//        
-        //TODO path is missing (?)
-        
+		<Feature id="'.$obj->getCurrentFeature()->getId().'" result="'. $obj->getCurrentFeature()->getPassedClass()  . '" title="'. htmlspecialchars($obj->getCurrentFeature()->getName(), ENT_XML1) . '">';
         return $print ;
     }     
 
@@ -171,15 +151,15 @@ class XmlRenderer
      * Renders after a feature.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : XML generated
+     * @return string  : HTML generated
      */     
     public function renderAfterFeature($obj) {
 		$print = '';
-		
+		$print .= '<results overall="'. $obj->getCurrentFeature()->getPassedClass() .'">'; 		
 		if ($obj->getCurrentFeature()->getTotalAmountOfScenarios() > 0 && $obj->getCurrentFeature()->getPassedClass() === 'failed') {
 			$print .= '<PassedPercent>'. round($obj->getCurrentFeature()->getPercentPassed(), 2) . '%</PassedPercent>';
 		}
-		$print .='</Feature>';
+		$print .='</results></Feature>';
         return $print ;
     }    
 
@@ -188,7 +168,7 @@ class XmlRenderer
      * Renders before a scenario.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : XML generated
+     * @return string  : HTML generated
      */            
     public function renderBeforeScenario($obj) {
         //scenario head
@@ -209,9 +189,9 @@ class XmlRenderer
 //                </h3>
 //                <ol>' ;
         
-        //TODO path is missing
-        $print = '<Scenario name="' .  $obj->getCurrentScenario()->getName() .'">';
-		
+        $print = '<Scenario name="' .  htmlspecialchars($obj->getCurrentSuite()->getName() .'--'.$obj->getCurrentFeature()->getName() .'--'. $obj->getCurrentScenario()->getName(), ENT_XML1) .'"> ';
+        //$print .= 'result="';
+        //$print .= $obj->getCurrentScenario()->isPassed();
 		
         return $print ;
     }     
@@ -220,10 +200,16 @@ class XmlRenderer
      * Renders after a scenario.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : XML generated
+     * @return string  : HTML generated
      */     
     public function renderAfterScenario($obj) {
-        $print = '</Scenario>';
+	if ($obj->getCurrentScenario()->isPassed() == 1){
+		$passed = "Passed";
+	}else{
+		$passed = "Failed";
+	}
+	$print = '<results overall="'.$passed.'">';
+        $print .= '</results></Scenario>';
         
         return $print ;
     }   
@@ -232,7 +218,7 @@ class XmlRenderer
      * Renders before an outline.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : XML generated
+     * @return string  : HTML generated
      */            
     public function renderBeforeOutline($obj) {
         return '' ;
@@ -242,7 +228,7 @@ class XmlRenderer
      * Renders after an outline.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : XML generated
+     * @return string  : HTML generated
      */     
     public function renderAfterOutline($obj) {
         return '' ;
@@ -252,7 +238,7 @@ class XmlRenderer
      * Renders before a step.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : XML generated
+     * @return string  : HTML generated
      */        
     public function renderBeforeStep($obj) {
 
@@ -263,7 +249,7 @@ class XmlRenderer
      * Renders after a step.
      *
      * @param object   : BehatHTMLFormatter object
-     * @return string  : XML generated
+     * @return string  : HTML generated
      */        
     public function renderAfterStep($obj) {
 
@@ -291,7 +277,7 @@ class XmlRenderer
         }
         
 		$print = '<Step keyword="'. $step->getKeyWord() .'" result="'.$stepResultClass.'">';
-		$print .='<text>'.$step->getText().'</text>';
+		$print .='<text>'.htmlspecialchars($step->getText(), ENT_XML1).'</text>';
 		$print .='<path>'.$strPath.'</path>';
         $print .="</Step>";
 		
