@@ -4,7 +4,7 @@ Please note this is a fork from the BehatHtmlFormatterPlugin with some modificat
 ### changes I made:
 * Add a Render to generate xml file for easier poste processing;
 * Now every render genereated file is with different names..
-* Adding the feature to show time spent in every Step/Scenario/Feature.. (for the moments just in xml, you can easily add this feature to html result
+* Adding the feature to show time spent in every Step/Scenario/Feature.. (for the moments just in xml, you can easily add this feature to html result)
 
 
 
