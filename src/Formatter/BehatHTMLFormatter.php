@@ -5,6 +5,7 @@ namespace emuse\BehatHTMLFormatter\Formatter;
 use Behat\Behat\EventDispatcher\Event\AfterFeatureTested;
 use Behat\Behat\EventDispatcher\Event\AfterOutlineTested;
 use Behat\Behat\EventDispatcher\Event\AfterScenarioTested;
+use Behat\Behat\EventDispatcher\Event\BeforeStepTested;
 use Behat\Behat\EventDispatcher\Event\AfterStepTested;
 use Behat\Behat\EventDispatcher\Event\BeforeFeatureTested;
 use Behat\Behat\EventDispatcher\Event\BeforeOutlineTested;
@@ -48,6 +49,21 @@ class BehatHTMLFormatter implements Formatter {
    * @var
    */
   private $timer;
+
+  /**
+   * @var
+   */
+  private $scenario_timer;
+
+  /**
+   * @var
+   */
+  private $feature_timer;
+
+  /**
+   * @var
+   */
+  private $step_timer;
 
   /**
    * @var
@@ -173,6 +189,9 @@ class BehatHTMLFormatter implements Formatter {
     $this->renderer = new BaseRenderer($renderer, $base_path);
     $this->printer = new FileOutputPrinter($this->renderer->getNameList(), $filename, $base_path);
     $this->timer = new Timer();
+	$this->scenario_timer = new Timer();
+	$this->step_timer = new Timer();
+	$this->feature_timer = new Timer();
     $this->memory = new Memory();
   }
 
@@ -193,6 +212,7 @@ class BehatHTMLFormatter implements Formatter {
       'tester.scenario_tested.after' => 'onAfterScenarioTested',
       'tester.outline_tested.before' => 'onBeforeOutlineTested',
       'tester.outline_tested.after' => 'onAfterOutlineTested',
+	  'tester.step_tested.before' => 'onBeforeStepTested',
       'tester.step_tested.after' => 'onAfterStepTested',
     );
   }
@@ -317,6 +337,18 @@ class BehatHTMLFormatter implements Formatter {
   public function getTimer() {
     return $this->timer;
   }
+  
+  public function getScenarioTimer() {
+	return $this->scenario_timer;
+  }
+  
+  public function getFeatureTimer() {
+	return $this->feature_timer;
+  }
+  
+  public function getStepTimer(){
+	return $this->step_timer;
+  }
 
   public function getMemory() {
     return $this->memory;
@@ -425,6 +457,7 @@ class BehatHTMLFormatter implements Formatter {
    */
   public function onBeforeFeatureTested(BeforeFeatureTested $event) {
     $feature = new Feature();
+	$this->feature_timer->start();
     $feature->setId($this->featureCounter);
     $this->featureCounter++;
     $feature->setName($event->getFeature()->getTitle());
@@ -441,6 +474,7 @@ class BehatHTMLFormatter implements Formatter {
    * @param AfterFeatureTested $event
    */
   public function onAfterFeatureTested(AfterFeatureTested $event) {
+	$this->feature_timer->stop();
     $this->currentSuite->addFeature($this->currentFeature);
     if ($this->currentFeature->allPassed()) {
       $this->passedFeatures[] = $this->currentFeature;
@@ -450,6 +484,7 @@ class BehatHTMLFormatter implements Formatter {
     }
 
     $print = $this->renderer->renderAfterFeature($this);
+
     $this->printer->writeln($print);
   }
 
@@ -458,6 +493,7 @@ class BehatHTMLFormatter implements Formatter {
    */
   public function onBeforeScenarioTested(BeforeScenarioTested $event) {
     $scenario = new Scenario();
+	$this->scenario_timer->start();
     $scenario->setName($event->getScenario()->getTitle());
     $scenario->setTags($event->getScenario()->getTags());
     $scenario->setLine($event->getScenario()->getLine());
@@ -486,7 +522,7 @@ class BehatHTMLFormatter implements Formatter {
     $this->currentScenario->setPassed($event->getTestResult()->isPassed());
     $this->currentFeature->addScenario($this->currentScenario);
 
-
+	$this->scenario_timer->stop();
     $print = $this->renderer->renderAfterScenario($this);
     $this->printer->writeln($print);
   }
@@ -532,6 +568,7 @@ class BehatHTMLFormatter implements Formatter {
    * @param BeforeStepTested $event
    */
   public function onBeforeStepTested(BeforeStepTested $event) {
+	$this->step_timer->start();
     $print = $this->renderer->renderBeforeStep($this);
     $this->printer->writeln($print);
   }
@@ -541,6 +578,7 @@ class BehatHTMLFormatter implements Formatter {
    * @param AfterStepTested $event
    */
   public function onAfterStepTested(AfterStepTested $event) {
+	$this->step_timer->stop();
     $result = $event->getTestResult();
 
       //$this->dumpObj($event->getStep()->getArguments());
@@ -583,7 +621,6 @@ class BehatHTMLFormatter implements Formatter {
     }
 
     $this->currentScenario->addStep($step);
-
     $print = $this->renderer->renderAfterStep($this);
     $this->printer->writeln($print);
   }

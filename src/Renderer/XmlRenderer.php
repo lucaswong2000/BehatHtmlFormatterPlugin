@@ -159,6 +159,7 @@ class XmlRenderer
 		if ($obj->getCurrentFeature()->getTotalAmountOfScenarios() > 0 && $obj->getCurrentFeature()->getPassedClass() === 'failed') {
 			$print .= '<PassedPercent>'. round($obj->getCurrentFeature()->getPercentPassed(), 2) . '%</PassedPercent>';
 		}
+		$print .='<time>'.$obj->getFeatureTimer().'</timer>';
 		$print .='</results></Feature>';
         return $print ;
     }    
@@ -172,23 +173,7 @@ class XmlRenderer
      */            
     public function renderBeforeScenario($obj) {
         //scenario head
-//        $print = '
-//            <div class="scenario">
-//                <ul class="tags">' ;
-//        foreach($obj->getCurrentScenario()->getTags() as $tag) {
-//            $print .= '
-//                    <li>@' . $tag .'</li>';
-//        }         
-//        $print .= '
-//                </ul>';        
-//        
-//        $print .= '
-//                <h3>
-//                    <span class="keyword">' . $obj->getCurrentScenario()->getId() . ' Scenario: </span>
-//                    <span class="title">' . $obj->getCurrentScenario()->getName() . '</span>
-//                </h3>
-//                <ol>' ;
-        
+       
         $print = '<Scenario name="' .  htmlspecialchars($obj->getCurrentSuite()->getName() .'--'.$obj->getCurrentFeature()->getName() .'--'. $obj->getCurrentScenario()->getName(), ENT_XML1) .'"> ';
         //$print .= 'result="';
         //$print .= $obj->getCurrentScenario()->isPassed();
@@ -209,6 +194,7 @@ class XmlRenderer
 		$passed = "Failed";
 	}
 	$print = '<results overall="'.$passed.'">';
+	$print .= '<time>'.$obj->getScenarioTimer().'</time>';
         $print .= '</results></Scenario>';
         
         return $print ;
@@ -279,6 +265,7 @@ class XmlRenderer
 		$print = '<Step keyword="'. $step->getKeyWord() .'" result="'.$stepResultClass.'">';
 		$print .='<text>'.htmlspecialchars($step->getText(), ENT_XML1).'</text>';
 		$print .='<path>'.$strPath.'</path>';
+		$print .='<time>'.$obj->getStepTimer().'</time>';
         $print .="</Step>";
 		
         return $print ;
